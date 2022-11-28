@@ -2,4 +2,4 @@
 
 source /data/acme.sh.env
 
-exec acme.sh "$@"
+exec /data/acme.sh "$@"
