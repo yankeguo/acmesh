@@ -1,0 +1,17 @@
+kind: once
+name: acmesh-setup
+dir: /
+command:
+  - /opt/bin/acmesh-setup
+---
+kind: cron
+name: acmesh-cron
+cron: "15 1 * * *"
+dir: /data
+command:
+  - /data/acme.sh
+  - --cron
+  - --home
+  - /data
+  - --dnssleep
+  - "30"

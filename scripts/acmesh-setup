@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -eu
+
+if [ -f /data/.initialized ]; then
+    echo "acmesh-setup: /data is already initialized"
+    exit 0
+fi
+
+cd /acmesh.origin
+
+./acme.sh --install --home /data --nocron --accountemail "${ACMESH_EMAIL}"
+
+touch /data/.initialized
