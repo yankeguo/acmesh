@@ -7,5 +7,9 @@ RUN mkdir -p /acmesh.origin && \
     tar -xvf acmesh.tar.gz --strip-components 1 -C /acmesh.origin && \
     rm -f acmesh.tar.gz
 
+RUN curl -sSL -o kubectl.tar.gz 'https://dl.k8s.io/v1.24.8/kubernetes-client-linux-amd64.tar.gz' && \
+    tar -xvf kubectl.tar.gz --strip-components 3 -C /opt/bin && \
+    rm -f kubectl.tar.gz
+
 ADD scripts /opt/bin
 ADD minit.d /etc/minit.d
