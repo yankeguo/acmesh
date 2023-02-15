@@ -1,6 +1,14 @@
-FROM ghcr.io/guoyk93/acicn/alpine:3.16
+FROM ghcr.io/guoyk93/minit:1.9.1 AS minit
 
-RUN apk add --no-cache openssl bash coreutils socat curl ca-certificates
+FROM alpine:3.17
+
+RUN mkdir -p /opt/bin
+ENV PATH "/opt/bin:${PATH}"
+
+COPY --from=minit /minit /opt/bin/minit
+ENTRYPOINT ["/opt/bin/minit"]
+
+RUN apk add --no-cache curl tzdata openssl bash coreutils socat curl ca-certificates
 
 RUN mkdir -p /acmesh.origin && \
     curl -sSL -o /acmesh.tar.gz 'https://github.com/acmesh-official/acme.sh/tarball/d4befeb5360e278fbc6be775c0ec60de464ed9fb' && \
