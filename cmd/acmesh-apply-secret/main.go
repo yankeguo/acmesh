@@ -10,7 +10,9 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/util/homedir"
 	"log"
 	"os"
 	"path/filepath"
@@ -33,11 +35,13 @@ func main() {
 	}()
 
 	var (
-		optDomain    string
-		optNamespace string
-		optName      string
+		optKubeconfig string
+		optDomain     string
+		optNamespace  string
+		optName       string
 	)
 
+	flag.StringVar(&optKubeconfig, "kubeconfig", os.Getenv("KUBECONFIG"), "kubeconfig file")
 	flag.StringVar(&optDomain, "domain", "", "domain name of secret to apply")
 	flag.StringVar(&optNamespace, "namespace", "", "namespace to apply secret, use '_all' for all namespaces")
 	flag.StringVar(&optName, "name", "", "name of secret")
@@ -67,7 +71,28 @@ func main() {
 
 	ctx := context.Background()
 
-	client := rg.Must(kubernetes.NewForConfig(rg.Must(clientcmd.DefaultClientConfig.ClientConfig())))
+	if optKubeconfig == "" {
+		optKubeconfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
+
+		if _, err = os.Stat(optKubeconfig); err != nil {
+			if os.IsNotExist(err) {
+				err = nil
+				optKubeconfig = ""
+			} else {
+				return
+			}
+		}
+	}
+
+	var config *rest.Config
+
+	if optKubeconfig == "" {
+		config = rg.Must(rest.InClusterConfig())
+	} else {
+		config = rg.Must(clientcmd.BuildConfigFromFlags("", optKubeconfig))
+	}
+
+	client := rg.Must(kubernetes.NewForConfig(config))
 
 	var namespaces []string
 
