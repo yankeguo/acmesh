@@ -62,12 +62,10 @@ func main() {
 		return
 	}
 
-	log.Println("loading certificate")
+	log.Println("loading certificate:", optDomain)
 
 	bufCrt := rg.Must(os.ReadFile(filepath.Join(DirData, optDomain, "fullchain.cer")))
 	bufKey := rg.Must(os.ReadFile(filepath.Join(DirData, optDomain, optDomain+".key")))
-
-	log.Println("certificate loaded for:", optDomain)
 
 	ctx := context.Background()
 
@@ -107,10 +105,10 @@ func main() {
 		}
 	}
 
-	log.Println("namespaces to updated:", strings.Join(namespaces, ", "))
+	log.Println("namespaces:", strings.Join(namespaces, ", "))
 
 	for _, namespace := range namespaces {
-		log.Println("applying:", namespace)
+		log.Println("working:", namespace)
 
 		var current *corev1.Secret
 
