@@ -1,3 +1,9 @@
+FROM golang:1.20 AS build
+ENV CGO_ENABLED 0
+WORKDIR /go/src/app
+ADD . .
+RUN go build -o /acmesh-apply-secret ./cmd/acmesh-apply-secret
+
 FROM ghcr.io/guoyk93/minit:1.10.1 AS minit
 
 FROM alpine:3.17
@@ -15,9 +21,7 @@ RUN mkdir -p /acmesh.origin && \
     tar -xvf acmesh.tar.gz --strip-components 1 -C /acmesh.origin && \
     rm -f acmesh.tar.gz
 
-RUN curl -sSL -o kubectl.tar.gz 'https://dl.k8s.io/v1.24.10/kubernetes-client-linux-amd64.tar.gz' && \
-    tar -xvf kubectl.tar.gz --strip-components 3 -C /opt/bin && \
-    rm -f kubectl.tar.gz
+COPY --from=build /acmesh-apply-secret /opt/bin/acmesh-apply-secret
 
 ADD scripts /opt/bin
 ADD minit.d /etc/minit.d

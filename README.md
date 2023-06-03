@@ -22,12 +22,12 @@ Just execute `acme.sh` as usual.
 
 `acme.sh` cronjob will execute at `15 1 * * *` automatically.
 
-### Helper Scripts
+### Helper
 
-You can use script `acmesh-patch-secret` to upload your certificate to Kubernetes cluster.
+You can use command `acmesh-apply-secret` to upload your certificate to Kubernetes cluster.
 
 ```shell
-acmesh-patch-secret mydomain.com my-namespace my-secret-name
+acmesh-apply-secret -domain mydomain.com -namespace my-namespace -name my-secret-name
 ```
 
 Since this image is based on `minit`, you can write a unit file to patch secret periodically.
@@ -38,23 +38,29 @@ Example:
 # /etc/minit.d/upload-cert.yaml
 
 kind: cron
-name: acmesh-patch-external-cluster
+name: acmesh-apply-external-cluster
 cron: '25 1 * * *'
 env:
   KUBECONFIG: /data/kubeconfigs/external.yaml
 command:
-  - acmesh-patch-secret
+  - acmesh-apply-secret
+  - -domain
   - my-domain.com
+  - -namespace
   - my-namespace
+  - -name
   - my-secret-name
 ---
 kind: cron
-name: acmesh-patch-local-cluster
+name: acmesh-apply-local-cluster
 cron: '25 1 * * *'
 command:
   - acmesh-patch-secret
+  - -domain
   - my-domain.com
+  - -namespace
   - my-namespace
+  - -name
   - my-secret-name
 ```
 
