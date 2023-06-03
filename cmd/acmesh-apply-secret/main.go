@@ -101,7 +101,10 @@ func main() {
 			namespaces = append(namespaces, item.Name)
 		}
 	} else {
-		namespaces = []string{optNamespace}
+		namespaces = strings.Split(optNamespace, ",")
+		for i := range namespaces {
+			namespaces[i] = strings.TrimSpace(namespaces[i])
+		}
 	}
 
 	log.Println("namespaces to updated:", strings.Join(namespaces, ", "))
@@ -114,12 +117,24 @@ func main() {
 		if current, err = client.CoreV1().Secrets(namespace).Get(ctx, optName, metav1.GetOptions{}); err != nil {
 			if errors.IsNotFound(err) {
 				err = nil
+
+				rg.Must(client.CoreV1().Secrets(namespace).Create(ctx, &corev1.Secret{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      optName,
+						Namespace: namespace,
+					},
+					Type: corev1.SecretTypeTLS,
+					Data: map[string][]byte{
+						corev1.TLSCertKey:       bufCrt,
+						corev1.TLSPrivateKeyKey: bufKey,
+					},
+				}, metav1.CreateOptions{}))
+
+				log.Println("  created")
 			} else {
 				return
 			}
-		}
-
-		if current != nil {
+		} else {
 			if bytes.Equal(current.Data[corev1.TLSCertKey], bufCrt) &&
 				bytes.Equal(current.Data[corev1.TLSPrivateKeyKey], bufKey) {
 				log.Println("  already up to date")
@@ -129,6 +144,9 @@ func main() {
 			if current.Labels == nil {
 				current.Labels = map[string]string{}
 			}
+			if current.Data == nil {
+				current.Data = map[string][]byte{}
+			}
 			current.Labels[LabelManagedBy] = "acmesh-apply-secret"
 			current.Data[corev1.TLSCertKey] = bufCrt
 			current.Data[corev1.TLSPrivateKeyKey] = bufKey
@@ -136,20 +154,6 @@ func main() {
 			rg.Must(client.CoreV1().Secrets(namespace).Update(ctx, current, metav1.UpdateOptions{}))
 
 			log.Println("  updated")
-		} else {
-			rg.Must(client.CoreV1().Secrets(namespace).Create(ctx, &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      optName,
-					Namespace: namespace,
-				},
-				Type: corev1.SecretTypeTLS,
-				Data: map[string][]byte{
-					corev1.TLSCertKey:       bufCrt,
-					corev1.TLSPrivateKeyKey: bufKey,
-				},
-			}, metav1.CreateOptions{}))
-
-			log.Println("  created")
 		}
 	}
 
