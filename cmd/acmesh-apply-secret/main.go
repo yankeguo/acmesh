@@ -18,8 +18,9 @@ import (
 )
 
 const (
-	DirData      = "/data"
-	NamespaceAll = "_all"
+	LabelManagedBy = "app.kubernetes.io/managed-by"
+	DirData        = "/data"
+	NamespaceAll   = "_all"
 )
 
 func main() {
@@ -100,6 +101,10 @@ func main() {
 				continue
 			}
 
+			if current.Labels == nil {
+				current.Labels = map[string]string{}
+			}
+			current.Labels[LabelManagedBy] = "acmesh-apply-secret"
 			current.Data[corev1.TLSCertKey] = bufCrt
 			current.Data[corev1.TLSPrivateKeyKey] = bufKey
 
