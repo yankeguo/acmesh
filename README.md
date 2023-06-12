@@ -8,6 +8,13 @@ Check [GitHub Packages](https://github.com/guoyk93/acmesh/pkgs/container/acmesh)
 
 ## Usage
 
+### Image
+
+```
+guoyk/acmesh:2023.6.12
+ghcr.io/guoyk93/acmesh:2023.6.12
+```
+
 ### Initialization
 
 if `/data/.initialized` does not exist, this image will install `acme.sh` to `/data` directory, using environment variable `ACMESH_EMAIL` as email address.
@@ -66,7 +73,7 @@ command:
 
 View <https://github.com/guoyk93/minit> for detailed usage of `minit`
 
-## RBAC Setup
+### RBAC Setup
 
 Here is a example to setup RBAC for `acmesh` service account.
 
