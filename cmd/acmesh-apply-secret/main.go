@@ -20,9 +20,10 @@ import (
 )
 
 const (
-	LabelManagedBy = "app.kubernetes.io/managed-by"
-	DirData        = "/data"
-	NamespaceAll   = "_all"
+	LabelManagedByKey   = "app.kubernetes.io/managed-by"
+	LabelManagedByValue = "acmesh-apply-secret"
+	DirData             = "/data"
+	NamespaceAll        = "_all"
 )
 
 func main() {
@@ -133,21 +134,23 @@ func main() {
 				return
 			}
 		} else {
-			if bytes.Equal(current.Data[corev1.TLSCertKey], bufCrt) &&
-				bytes.Equal(current.Data[corev1.TLSPrivateKeyKey], bufKey) {
-				log.Println("  already up to date")
-				continue
-			}
-
 			if current.Labels == nil {
 				current.Labels = map[string]string{}
 			}
 			if current.Data == nil {
 				current.Data = map[string][]byte{}
 			}
-			current.Labels[LabelManagedBy] = "acmesh-apply-secret"
+
+			if bytes.Equal(current.Data[corev1.TLSCertKey], bufCrt) &&
+				bytes.Equal(current.Data[corev1.TLSPrivateKeyKey], bufKey) &&
+				current.Labels[LabelManagedByKey] == LabelManagedByValue {
+				log.Println("  already up to date")
+				continue
+			}
+
 			current.Data[corev1.TLSCertKey] = bufCrt
 			current.Data[corev1.TLSPrivateKeyKey] = bufKey
+			current.Labels[LabelManagedByKey] = LabelManagedByValue
 
 			rg.Must(client.CoreV1().Secrets(namespace).Update(ctx, current, metav1.UpdateOptions{}))
 

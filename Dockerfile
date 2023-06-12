@@ -17,7 +17,7 @@ ENTRYPOINT ["/opt/bin/minit"]
 RUN apk add --no-cache curl tzdata openssl bash coreutils socat curl ca-certificates
 
 RUN mkdir -p /acmesh.origin && \
-    curl -sSL -o /acmesh.tar.gz 'https://github.com/acmesh-official/acme.sh/tarball/0d25f7612bf37a42d9c4fcb1abc493b2a5e495c3' && \
+    curl -sSL -o /acmesh.tar.gz 'https://github.com/acmesh-official/acme.sh/tarball/b7caf7a0165d80dd1556b16057a06bb32025066d' && \
     tar -xvf acmesh.tar.gz --strip-components 1 -C /acmesh.origin && \
     rm -f acmesh.tar.gz
 
