@@ -33,6 +33,7 @@ func main() {
 			return
 		}
 		log.Println("exited with error:", err.Error())
+		os.Exit(1)
 	}()
 
 	var (

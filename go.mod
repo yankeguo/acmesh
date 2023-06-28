@@ -4,6 +4,8 @@ go 1.20
 
 require (
 	github.com/guoyk93/rg v1.0.0
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.689
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.689
 	k8s.io/api v0.22.11
 	k8s.io/apimachinery v0.22.11
 	k8s.io/client-go v0.22.11

@@ -29,9 +29,23 @@ Just execute `acme.sh` as usual.
 
 `acme.sh` cronjob will execute at `15 1 * * *` automatically.
 
-### Helper
+### Helper `acmesh-upload-qcloud`
+
+You can use command `acmesh-upload-qcloud` to upload your certificate to Qcloud
+
+**Usage**
+
+```shell
+export QCLOUD_SECRET_ID=xxxxxxxxxxxx
+export QCLOUD_SECRET_KEY=xxxxxxxxxxxx
+acmesh-upload-qcloud -domain mydomain.com
+```
+
+### Helper `acmesh-apply-secret`
 
 You can use command `acmesh-apply-secret` to upload your certificate to Kubernetes cluster.
+
+**Usage**
 
 ```shell
 acmesh-apply-secret -domain mydomain.com -namespace my-namespace -name my-secret-name
@@ -73,9 +87,9 @@ command:
 
 View <https://github.com/guoyk93/minit> for detailed usage of `minit`
 
-### RBAC Setup
+**RBAC Setup**
 
-Here is a example to setup RBAC for `acmesh` service account.
+Here is a example to setup RBAC for `acmesh-apply-secret`.
 
 ```yaml
 apiVersion: v1

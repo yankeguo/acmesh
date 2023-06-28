@@ -3,6 +3,7 @@ ENV CGO_ENABLED 0
 WORKDIR /go/src/app
 ADD . .
 RUN go build -o /acmesh-apply-secret ./cmd/acmesh-apply-secret
+RUN go build -o /acmesh-upload-qcloud ./cmd/acmesh-upload-qcloud
 
 FROM ghcr.io/guoyk93/minit:1.10.1 AS minit
 
@@ -22,6 +23,7 @@ RUN mkdir -p /acmesh.origin && \
     rm -f acmesh.tar.gz
 
 COPY --from=build /acmesh-apply-secret /opt/bin/acmesh-apply-secret
+COPY --from=build /acmesh-upload-qcloud /opt/bin/acmesh-upload-qcloud
 
 ADD scripts /opt/bin
 ADD minit.d /etc/minit.d
