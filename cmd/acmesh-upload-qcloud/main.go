@@ -34,6 +34,7 @@ func main() {
 		log.Println("exited with error:", err.Error())
 		os.Exit(1)
 	}()
+	defer rg.Guard(&err)
 
 	var (
 		optDomain string
